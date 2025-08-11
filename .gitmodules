@@ -1,0 +1,9 @@
+[submodule "PETR"]
+	path = PETR
+	url = git@github.com:megvii-research/PETR.git
+[submodule "BEVFormer"]
+	path = BEVFormer
+	url = git@github.com:fundamentalvision/BEVFormer.git
+[submodule "waymo-open-dataset"]
+	path = waymo-open-dataset
+	url = git@github.com:waymo-research/waymo-open-dataset.git
