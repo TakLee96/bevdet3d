@@ -1,0 +1,11 @@
+{
+  "data_root": "waymo_open_dataset_v_1_4_3",
+  "output_dir": "./test_outputs",
+  "batch_size": 1,
+  "num_epochs": 2,
+  "lr": 0.0001,
+  "num_workers": 4,
+  "val_freq": 1,
+  "resume": null,
+  "max_frames": 10
+}

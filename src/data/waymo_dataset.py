@@ -10,9 +10,12 @@ import cv2
 from typing import Dict, List, Optional, Tuple, Any
 import logging
 
-# Disable TensorFlow logging
-tf.get_logger().setLevel('ERROR')
+# Disable TensorFlow logging completely
+import warnings
+warnings.filterwarnings('ignore')
+tf.get_logger().setLevel('FATAL')
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 class WaymoDataset(Dataset):
     """
@@ -123,17 +126,18 @@ class WaymoDataset(Dataset):
     def __len__(self) -> int:
         return len(self.frame_infos)
         
-    def _load_frame_from_tfrecord(self, tfrecord_path: str, frame_idx: int) -> open_dataset.Frame:
-        """Load a specific frame from tfrecord file."""
+    def _load_frame_by_timestamp(self, tfrecord_path: str, target_timestamp: int) -> open_dataset.Frame:
+        """Load a frame by timestamp from tfrecord file."""
         dataset = tf.data.TFRecordDataset(tfrecord_path, compression_type='')
         
-        for i, data in enumerate(dataset):
-            if i == frame_idx:
-                frame = open_dataset.Frame()
-                frame.ParseFromString(data.numpy())
+        for data in dataset:
+            frame = open_dataset.Frame()
+            frame.ParseFromString(data.numpy())
+            
+            if frame.timestamp_micros == target_timestamp:
                 return frame
                 
-        raise IndexError(f"Frame {frame_idx} not found in {tfrecord_path}")
+        raise ValueError(f"Frame with timestamp {target_timestamp} not found in {tfrecord_path}")
         
     def _process_images(self, frame: open_dataset.Frame) -> Tuple[torch.Tensor, List[Dict]]:
         """Process camera images from frame."""
@@ -250,18 +254,8 @@ class WaymoDataset(Dataset):
         """Get a data sample."""
         frame_info = self.frame_infos[idx]
         
-        # Find frame index within the tfrecord file
-        frame_idx = 0
-        current_file = frame_info['tfrecord_path']
-        for i in range(idx):
-            if self.frame_infos[i]['tfrecord_path'] == current_file:
-                frame_idx += 1
-            else:
-                frame_idx = 0
-                current_file = self.frame_infos[i]['tfrecord_path']
-                
-        # Load frame from tfrecord
-        frame = self._load_frame_from_tfrecord(frame_info['tfrecord_path'], frame_idx)
+        # Load frame directly using stored frame data (simplified approach)
+        frame = self._load_frame_by_timestamp(frame_info['tfrecord_path'], frame_info['timestamp'])
         
         # Process data
         images, camera_infos = self._process_images(frame)

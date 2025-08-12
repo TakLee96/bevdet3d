@@ -6,6 +6,13 @@ import argparse
 import logging
 import json
 from datetime import datetime
+
+# Suppress TensorFlow warnings before importing
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+import warnings
+warnings.filterwarnings('ignore')
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
