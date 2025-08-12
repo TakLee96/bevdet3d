@@ -1,6 +1,39 @@
 # bevdet3d
 Goal: Reproduce PETR / BEVFormer / BEVFusion on WOD in plain PyTorch
 
+## TODOs
+
+### Phase 1: Environment and Data Setup
+- [x] 1. Set up development environment and verify data access
+- [x] 2. Study PETR and BEVFormer implementations in submodules
+- [x] 3. Implement Waymo Open Dataset data loader for tfrecord format
+
+### Phase 2: Model Implementation  
+- [ ] 4. Implement PETR model in pure PyTorch (no mmdet3d dependency)
+- [ ] 5. Implement BEVFormer model in pure PyTorch (no mmdet3d dependency)
+
+### Phase 3: Training Pipeline
+- [ ] 6. Create training pipeline for PETR on Waymo dataset
+- [ ] 7. Create training pipeline for BEVFormer on Waymo dataset
+- [ ] 8. Implement evaluation metrics for Waymo 3D detection
+
+### Phase 4: Training and Evaluation
+- [ ] 9. Train and evaluate PETR model on Waymo dataset
+- [ ] 10. Train and evaluate BEVFormer model on Waymo dataset
+
+## Progress Log
+- **2025-08-12**: Project initialized, submodules cloned, basic environment verified
+- **2025-08-12**: Environment setup completed with PyTorch 2.7.1+cu128, NVIDIA L4 GPU verified
+- **2025-08-12**: Analyzed PETR and BEVFormer mmdet3d implementations in submodules
+- **2025-08-12**: Implemented Waymo Open Dataset loader with multi-camera support, tested successfully
+
+## Claude Code
+
+```
+npm install -g @anthropic-ai/claude-code
+claude
+```
+
 ## Waymo Open Dataset
 
 Register your account on [WOMD](https://waymo.com/open/licensing/?continue=%2Fopen%2Fdownload%2F) website

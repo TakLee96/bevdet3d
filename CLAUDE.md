@@ -17,4 +17,4 @@ Please remember to:
 2. Whenever you made progress, add unit test, document progress in README.md and make git commit
 3. If you wish to install additional packages (e.g. einops), remember to update requirements.txt
 
-You're currently running inside windows git bash on a local laptop with Nvidia 4060 GPU (python/tensorflow/pytorch is available and already installed in conda environment `tensorflow`; feel free to `pip list` or `python --version` or `nvidia-smi` to check what's available). Only `waymo_open_dataset_v_1_4_3/individual_files/validation` is downloaded (for now, only use validation data; if the code is working, I will migrate this project to a linux server and download the entire dataset there).
+You're currently running inside zsh on a linux server with Nvidia L4 GPU (python/tensorflow/pytorch is available and already installed; feel free to `pip list` or `python --version` or `nvidia-smi` to check what's available; no need to create virtualenv or conda env). Waymo dataset is availabel via FUSE (gcsfuse) at `waymo_open_dataset_v_1_4_3`. If we can setup training properly, I will fully download the data.

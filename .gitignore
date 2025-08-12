@@ -172,3 +172,23 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Dataset directories - large files that shouldn't be tracked
+waymo_open_dataset_v_1_4_3/
+
+# Model checkpoints and training artifacts
+checkpoints/
+logs/
+runs/
+outputs/
+*.pth
+*.ckpt
+*.pkl
+
+# IDE specific files
+.vscode/
+.idea/
+
+# OS specific files
+.DS_Store
+Thumbs.db
