@@ -37,6 +37,8 @@ Goal: Reproduce PETR / BEVFormer / BEVFusion on WOD in plain PyTorch
 - **2025-08-12**: Implemented full BEVFormer model with spatial/temporal attention (24.0M parameters) 
 - **2025-08-12**: Created BEVFormer training pipeline with temporal BEV feature modeling
 - **2025-08-12**: Verified BEVFormer training: forward/backward passes + temporal features working correctly
+- **2025-08-25**: Reorganized all test files into `tests/` directory with consistent naming conventions
+- **2025-08-25**: Created comprehensive test suite with runner script: all 4 tests passing in WSL environment
 
 ## Claude Code
 
@@ -74,3 +76,20 @@ pip install -U protobuf==3.20.1
 Follow `tutorial_*.ipynb` notebooks to learn how to load data from WOMD.
 
 Here we focus on waymo_open_dataset_v_1_4_3 for 3D object detection using camera + lidar.
+
+## Testing
+
+The project includes a comprehensive test suite in the `tests/` directory:
+
+```bash
+# Run all tests
+python tests/run_all_tests.py
+
+# Run individual tests
+python tests/test_dataset.py        # Dataset loading tests
+python tests/test_training.py       # Training pipeline tests  
+python tests/test_petr_quick.py     # PETR quick training test
+python tests/test_bevformer_quick.py # BEVFormer quick training test
+```
+
+All tests should pass in a WSL/Linux environment with CUDA support.

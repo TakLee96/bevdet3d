@@ -18,3 +18,27 @@ Please remember to:
 3. If you wish to install additional packages (e.g. einops), remember to update requirements.txt
 
 You're currently running inside zsh on a linux server with Nvidia L4 GPU (python/tensorflow/pytorch is available and already installed; feel free to `pip list` or `python --version` or `nvidia-smi` to check what's available; no need to create virtualenv or conda env). Waymo dataset is availabel via FUSE (gcsfuse) at `waymo_open_dataset_v_1_4_3`. If we can setup training properly, I will fully download the data.
+
+## Session Notes (2025-08-25)
+
+### WSL Environment Setup
+- User has WSL environment on Windows with RTX 4060 Laptop GPU
+- Successfully installed required packages: waymo-open-dataset-tf-2-12-0, opencv-python-headless, einops
+- Fixed protobuf version compatibility issues with protobuf==3.20.1
+- All tests now pass in WSL environment
+
+### Test Organization Complete
+- Reorganized all test files into `tests/` directory with consistent naming
+- Created comprehensive test runner script (`tests/run_all_tests.py`)  
+- All 4 tests passing: dataset, training pipeline, PETR quick, BEVFormer quick
+- Tests work correctly with relative paths and proper import handling
+
+### Important Commands
+- Test runner: `python tests/run_all_tests.py`
+- Individual tests: `python tests/test_*.py`
+- Tests require CUDA GPU and Waymo dataset files in `waymo_open_dataset_v_1_4_3/`
+
+### Environment Status
+- Project fully functional in WSL with local dataset samples
+- Both PETR and BEVFormer models ready for full training
+- Complete test coverage for all major components
