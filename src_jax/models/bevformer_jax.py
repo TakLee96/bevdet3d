@@ -286,7 +286,7 @@ class BEVFormerModel(nn.Module):
         ref_points = jnp.stack([x_grid, y_grid], axis=-1).reshape(-1, 2)
         
         # Expand for batch
-        ref_points = jnp.broadcast_to(ref_points[None, ...], (batch_size, self.bev_h * self.bev_w, 2))
+        ref_points = jnp.tile(ref_points[None, ...], (batch_size, 1, 1))
         
         return ref_points
         
@@ -311,6 +311,7 @@ class BEVFormerModel(nn.Module):
         
         return feats, spatial_shapes
         
+    @nn.compact
     def __call__(self, images, prev_bev=None, training=True):
         """
         Args:
@@ -325,7 +326,7 @@ class BEVFormerModel(nn.Module):
         # Get BEV queries and positional encoding
         bev_queries = self.param('bev_queries', 
                                 lambda rng: jax.random.normal(rng, (self.bev_h * self.bev_w, self.embed_dims)))
-        bev_queries = jnp.broadcast_to(bev_queries[None, ...], (batch_size, self.bev_h * self.bev_w, self.embed_dims))
+        bev_queries = jnp.tile(bev_queries[None, ...], (batch_size, 1, 1))
         
         bev_pos = self.bev_pos_encoding(bev_queries)  # [B, H*W, D]
         
@@ -346,7 +347,7 @@ class BEVFormerModel(nn.Module):
         # Object detection from BEV features
         object_queries = self.param('object_queries',
                                    lambda rng: jax.random.normal(rng, (self.num_queries, self.embed_dims)))
-        object_queries = jnp.broadcast_to(object_queries[None, ...], (batch_size, self.num_queries, self.embed_dims))
+        object_queries = jnp.tile(object_queries[None, ...], (batch_size, 1, 1))
         
         # Cross-attention: object queries attend to BEV features
         detection_features = self.detection_cross_attn(
@@ -423,7 +424,7 @@ if __name__ == "__main__":
     print(f"BEV features shape: {outputs['bev_features'].shape}")
     
     # Count parameters
-    param_count = sum(x.size for x in jax.tree_leaves(params))
+    param_count = sum(x.size for x in jax.tree.leaves(params))
     print(f"Total parameters: {param_count:,}")
     
     # Test temporal modeling

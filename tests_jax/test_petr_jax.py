@@ -183,7 +183,7 @@ class TestPETRJAX(unittest.TestCase):
         self.assertTrue(jnp.all(jnp.isfinite(outputs['reference_points'])))
         
         # Count parameters
-        param_count = sum(x.size for x in jax.tree_leaves(params))
+        param_count = sum(x.size for x in jax.tree.leaves(params))
         
         print(f"✓ PETR model forward pass successful")
         print(f"✓ Model parameters: {param_count:,}")

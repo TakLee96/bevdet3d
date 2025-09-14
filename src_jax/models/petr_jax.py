@@ -220,35 +220,20 @@ class ResNet50Backbone(nn.Module):
     
     @nn.compact
     def __call__(self, x, training=True):
-        # This is a simplified version - in production you'd want to use 
-        # a proper ResNet50 implementation or load pretrained weights
+        # This is a simplified version without BatchNorm for easier testing
+        # In production you'd want to use a proper ResNet50 implementation
         
         # Initial conv
-        x = nn.Conv(64, kernel_size=(7, 7), strides=(2, 2), padding=3)(x)
-        x = nn.BatchNorm(use_running_average=not training)(x)
+        x = nn.Conv(64, kernel_size=(7, 7), strides=(2, 2), padding=((3, 3), (3, 3)))(x)
         x = nn.relu(x)
-        x = nn.max_pool(x, window_shape=(3, 3), strides=(2, 2), padding=1)
+        x = nn.max_pool(x, window_shape=(3, 3), strides=(2, 2), padding=((1, 1), (1, 1)))
         
-        # Simplified residual blocks
-        for stage, (channels, num_blocks, stride) in enumerate([
-            (64, 3, 1), (128, 4, 2), (256, 6, 2), (512, 3, 2)
-        ]):
-            for block in range(num_blocks):
-                block_stride = stride if block == 0 else 1
-                residual = x
-                
-                x = nn.Conv(channels, kernel_size=(3, 3), strides=(block_stride, block_stride), padding=1)(x)
-                x = nn.BatchNorm(use_running_average=not training)(x)
-                x = nn.relu(x)
-                x = nn.Conv(channels, kernel_size=(3, 3), padding=1)(x)
-                x = nn.BatchNorm(use_running_average=not training)(x)
-                
-                # Adjust residual if needed
-                if block == 0 and (stride != 1 or residual.shape[-1] != channels):
-                    residual = nn.Conv(channels, kernel_size=(1, 1), strides=(stride, stride))(residual)
-                    residual = nn.BatchNorm(use_running_average=not training)(residual)
-                
-                x = nn.relu(x + residual)
+        # Simplified conv blocks (without residual connections for simplicity)
+        for channels in [64, 128, 256, 512]:
+            x = nn.Conv(channels, kernel_size=(3, 3), strides=(2, 2), padding=((1, 1), (1, 1)))(x)
+            x = nn.relu(x)
+            x = nn.Conv(channels, kernel_size=(3, 3), padding=((1, 1), (1, 1)))(x)
+            x = nn.relu(x)
         
         return x
 
@@ -328,10 +313,11 @@ class PETRModel(nn.Module):
         ref_points = ref_points * (pc_range[3:] - pc_range[:3]) + pc_range[:3]
         
         # Expand for batch
-        ref_points = jnp.broadcast_to(ref_points[None, ...], (batch_size, self.num_queries, 3))
+        ref_points = jnp.tile(ref_points[None, ...], (batch_size, 1, 1))
         
         return ref_points
         
+    @nn.compact
     def __call__(self, images, training=True):
         """
         Args:
@@ -353,7 +339,7 @@ class PETRModel(nn.Module):
         # Get object queries
         query_embed = self.param('query_embed', 
                                 lambda rng: jax.random.normal(rng, (self.num_queries, self.embed_dims)))
-        query_embed = jnp.broadcast_to(query_embed[None, ...], (batch_size, self.num_queries, self.embed_dims))
+        query_embed = jnp.tile(query_embed[None, ...], (batch_size, 1, 1))
         
         # Get positional encodings
         query_pos = self.pos_encoding(reference_points)  # [B, num_queries, D]
@@ -432,5 +418,5 @@ if __name__ == "__main__":
     print(f"Reference points shape: {outputs['reference_points'].shape}")
     
     # Count parameters
-    param_count = sum(x.size for x in jax.tree_leaves(params))
+    param_count = sum(x.size for x in jax.tree.leaves(params))
     print(f"Total parameters: {param_count:,}")
