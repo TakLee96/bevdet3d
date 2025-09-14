@@ -5,8 +5,7 @@
       "Bash(nvidia-smi:*)",
       "Bash(python:*)",
       "Bash(mkdir:*)",
-      "Bash(pip install:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
     ],
     "deny": [],
     "ask": []
